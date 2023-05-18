@@ -35,5 +35,11 @@ public class ItemDao {
 		return template.query("select * from item order by id", param, mapper);
 		//"select * from item order by id" 조회된 결과를 mapper 로 만들어서 Item.class 넣는다
 	}
+	public Item getItem(Integer id) {
+		param.clear();
+		param.put("id", id);
+		return template.queryForObject
+				("select * from item where id=:id", param, mapper);
+	}
 
 }

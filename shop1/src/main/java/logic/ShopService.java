@@ -16,4 +16,8 @@ public class ShopService {
 	public List<Item> itemList() {
 		return itemDao.list();
 	}
+
+	public Item getItem(Integer id) {
+		return itemDao.getItem(id);
+	}
 }
