@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				[%date{HH:mm:ss.SSS, Asia/Seoul}][%-5level][%logger] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="rolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>d:/log/shop1.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5kb</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+      		<totalSizeCap>3gb</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				[%date{HH:mm:ss.SSS, Asia/Seoul}][%-5level][%logger][%file:%line] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<logger name="controller"       level="INFO" />
+	<logger name="org.springframework" level="INFO" />
+	<logger name="log4jdbc"            level="OFF" />
+	<logger name="jdbc.sqlonly"        level="OFF" />
+	<logger name="jdbc.sqltiming"      level="OFF" />
+	<logger name="jdbc.resultsettable" level="OFF" />
+	<logger name="jdbc.audit"          level="OFF" />
+	<logger name="jdbc.resultset"      level="OFF" />
+	<logger name="jdbc.connection"     level="OFF" />
+	<root>
+		<appender-ref ref="console" />
+		<appender-ref ref="rolling" />
+	</root>
+</configuration>

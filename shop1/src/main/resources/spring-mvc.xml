@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--  /shop1/src/main/resources/spring-mvc.xml -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"       
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/context
+ http://www.springframework.org/schema/context/spring-context.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop.xsd
+ http://www.springframework.org/schema/mvc
+ http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<mvc:default-servlet-handler/>
+ <!-- js, css, html : 웹에서 기본제공되는 파일은 spring 에서 제외시킴. -->
+<context:component-scan base-package="controller,logic,dao" />
+<!-- 3개 패키지 중에 component 가 있으면 객체화 시켜 -->
+<!-- @Component, @Controller, @Service, @Repository => 객체화 -->
+<mvc:annotation-driven />
+<!-- mvc(웹 환경) 관련 어노테이션 적용 할 수 있도록 해줘 -->
+<bean id="viewResolver" 
+	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<!-- 
+	viewResolver : view 선택자, view 결정자 -> jsp 페이지의 위치 지정 
+	item/list :  /WEB-INF/view/item/list.jsp  => itemList 데이터 전달
+-->
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix">
+		<!-- spring에서는 jsp를 WEB-INF 밑에 넣어준다. -->
+			<value>/WEB-INF/view/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+			<!-- 뒤에 .jsp 붙여줘라 -->
+		</property>
+	</bean>
+</beans>
