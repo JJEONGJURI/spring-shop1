@@ -18,7 +18,7 @@ public class Item {
 	@NotEmpty(message="상품설명을 입력하세요")
 	private String description;
 	private String pictureUrl;
-	private MultipartFile picture;
+	private MultipartFile picture; //picture file에서 업로드 된 파일 내용
 	public int getId() {
 		return id;
 	}

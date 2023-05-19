@@ -14,7 +14,7 @@
  http://www.springframework.org/schema/aop/spring-aop.xsd
  http://www.springframework.org/schema/mvc
  http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-<mvc:default-servlet-handler/>
+<mvc:default-servlet-handler/> <!-- 없으면 안됨 -->
  <!-- js, css, html : 웹에서 기본제공되는 파일은 spring 에서 제외시킴. -->
 <context:component-scan base-package="controller,logic,dao" />
 <!-- 3개 패키지 중에 component 가 있으면 객체화 시켜 -->
@@ -39,4 +39,7 @@
 			<!-- 뒤에 .jsp 붙여줘라 -->
 		</property>
 	</bean>
+	<!-- 파일 업로드 설정 -->
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+p:maxUploadSize = "104854600" p:maxInMemorySize="10485460" />
 </beans>
