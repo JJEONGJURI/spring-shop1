@@ -80,6 +80,20 @@ public class UserController { //POJO 방식
 		//2. 비밀번호 검증 :
 		// 		일치 : session.setAttribute("loginUser",dbUser) => 로그인 정보
 		//	   불일치 : 비밀번호를 확인하세요. 출력 (error.login.password)
+/*
+		if(user.getPassword().equals(dbUser.getPassword())) { //정상 로그인
+			session.setAttribute("loginUser", dbUser);
+			mav.setViewName("redirect:mypage");
+		} else {
+			bresult.reject("error.login.password");
+			mav.getMode().putAll(bresult.getModel());
+			
+		}
+		return mav;
+		
+		
+		
+*/		
 		
 		try {
 			User dbUser = service.selectPassOne(user.getUserid(),user.getPassword());

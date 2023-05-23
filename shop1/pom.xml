@@ -107,6 +107,14 @@
 		</dependency>
 		<!-- 파일 업로드 설정 끝-->
 		
+		<!-- sitemesh 설정 -->
+		<dependency>
+			<groupId>org.sitemesh</groupId>
+			<artifactId>sitemesh</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<!-- sitemesh 설정 끝 -->
+
 		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
 		<dependency>
 			<groupId>org.aspectj</groupId>

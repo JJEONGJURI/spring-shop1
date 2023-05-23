@@ -17,11 +17,14 @@ js, css, html : 웹에서 기본제공되는 파일은 spring 에서 제외시�
  http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 	<mvc:default-servlet-handler /> 
 	<context:component-scan
-		base-package="controller,logic,dao" />
+		base-package="controller,logic,dao,aop" />
 	<!-- 3개 패키지 중에 component 가 있으면 객체화 시켜 -->
 	<!-- @Component, @Controller, @Service, @Repository => 객체화 -->
+	<!-- mvc 관련 어노테이션 적용 -->
 	<mvc:annotation-driven />
-	<!-- mvc(웹 환경) 관련 어노테이션 적용 할 수 있도록 해줘 -->
+	<!-- AOP 관련 어노테이션 적용 -->
+	<aop:aspectj-autoproxy /> 
+	<!-- mvc(웹 환경) 관련 어노테이션 적용 할 수 있도록 해줘 -->	
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<!-- viewResolver : view 선택자, view 결정자 -> jsp 페이지의 위치 지정 item/list : /WEB-INF/view/item/list.jsp 
