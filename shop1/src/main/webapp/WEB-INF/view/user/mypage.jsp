@@ -11,12 +11,13 @@
 	$(function(){	//layout에 제이쿼리부분 있어야 사용가능함
 		//<script type="text/javascript" src= 
 //"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
-		$("#minfo").show()
-		$("#oinfo").hide()
-		$(".saleLine").each(function(){
-			$(this).hide()
+		$("#minfo").show() //아이디 속성이 minfo 인 것만 보여줘 => 회원정보
+		$("#oinfo").hide() //아이디 속성이 oinfo 인 것은 안보여줌 => 주문정보
+		//위에 두줄로 처음 화면에서 minfo 만 나오고 oinfo 는 안나오는 이유
+		$(".saleLine").each(function(){	//class="saleLine" 모든 태그 => 주문상품조회부분
+			$(this).hide()	//안보이도록함
 		})
-		$("#tab1").addClass("select")
+		$("#tab1").addClass("select") //id 속성이 tab1 인거에 select class 속성 추가
 	})
 	function disp_div(id,tab) {
 		$(".info").each(function(){
@@ -26,10 +27,10 @@
 		$(".tab").each(function() {
 			$(this).removeClass("select")
 		})
-		$("#"+id).show()
+		$("#"+id).show() //클릭된거만 보여줌
 		$("#"+tab).addClass("select")
 	}
-	function list_disp(id) {
+	function list_disp(id) {//id=saleLine0,saleLine1...
 		$("#"+id).toggle()	//toggle => 현재 보이는 경우 => 안보이도록 변경
 							//			현재 안보이고 있으면 => 보이도록 변경
 	}
@@ -39,7 +40,7 @@
 		padding:3px;
 		background-color: #0000ff;
 	}
-	.xelect>a {
+	.select>a {
 		color : #ffffff;
 		text-decoration:none;
 		font-weight: bold;
@@ -49,7 +50,7 @@
 </head>
 <%--
 	* 필요한거
-	파라미터	 : userid 
+	파라미터	 : userid > 관리자일경우 다른사람 회원정보도 봐야해서 파라미터값 필요함
 	salelist : userid가 주문한 전체 Sale 객체 목록.(List)
 	user	 : userid에 해당하는 회원정보
 	
@@ -68,7 +69,7 @@
 			</c:if>
 		</tr>
 	</table>
-	<div id="oinfo" class="info" style="display:none; width:100%;">
+	<div id="oinfo" class="info" style="display:none; width:100%;"> <%-- 안보여줌 : function에서 관리 --%>
 		<table>
 			<tr>
 				<th>주문번호</th>
@@ -115,7 +116,7 @@
 			</c:forEach>		
 		</table>
 	</div>
-	<div id="minfo" class="info">
+	<div id="minfo" class="info"> <%--보여지고 있음 --%>
 		<table>
 			<tr>
 				<td>아이디</td>
@@ -148,7 +149,7 @@
 		<a href="update?userid=${user.userid}">[회원정보수정]</a>&nbsp;
 		<a href="password">[비밀번호수정]</a>&nbsp;
 		<c:if test="${loginUser.userid != 'admin' }">
-			<a href="delete?userid=">[회원탈퇴]</a>&nbsp;
+			<a href="delete?userid=${user.userid}">[회원탈퇴]</a>&nbsp;
 		</c:if>		
 		<c:if test="${loginUser.userid == 'admin' }">
 			<a href="../admin/list">[회원목록]</a>&nbsp;
