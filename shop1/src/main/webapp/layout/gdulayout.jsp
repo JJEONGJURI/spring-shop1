@@ -63,7 +63,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <a href="${path}/item/list" 
     class="w3-bar-item w3-button w3-padding">
     <i class="fa fa-eye fa-fw"></i>&nbsp; 상품관리</a>
+    <a href="${path}/chat/chat" 
+    class="w3-bar-item w3-button w3-padding">
+    <i class="fa fa-eye fa-fw"></i>&nbsp; 채팅하기</a>
     <hr>
+    
     <a href="${path}/board/list?boardid=1" 
     class="w3-bar-item w3-button w3-padding">
     <i class="fa fa-eye fa-fw"></i>&nbsp; 공지사항</a>

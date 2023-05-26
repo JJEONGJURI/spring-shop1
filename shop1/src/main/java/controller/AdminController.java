@@ -123,6 +123,8 @@ public class AdminController {
 		ModelAndView mav = new ModelAndView("alert");
 		Properties prop = new Properties();
 		try {
+			//mail.properties : resources 폴더에 생성
+			//java,resources 폴더의 내용은 : WEB-INF/classes에 복사됨
 			FileInputStream fis = new FileInputStream
 					(session.getServletContext().getRealPath("/")+"/WEB-INF/classes/mail.properties");
 			prop.load(fis);
@@ -197,7 +199,7 @@ public class AdminController {
 		if(!f1.exists()) f1.mkdirs();
 		File f2 = new File(path + orgFile);
 		try {
-			mf.transferTo(f2); //파일업로드
+			mf.transferTo(f2); //여러개 파일업로드
 			body.attachFile(f2); //이메일 첨부
 			body.setFileName(new String(orgFile.getBytes("UTF-8"),"8859_1"));
 			//인식할 수 있도록 8859_1로 바꿔서  fileName 에 넣어준다? 첨부된 파일의 파일명

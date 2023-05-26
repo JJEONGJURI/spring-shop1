@@ -53,6 +53,7 @@
 					<select name="mtype" class="w3-input">
 						<option value="text/html; charset=utf-8">HTML</option>
 						<option value="text/plain; charset=utf-8">TEXT</option>
+						<!-- 소스보기 만들어주는 틀이 ckeditor 임? -->
 					</select>
 				</td>
 			</tr>

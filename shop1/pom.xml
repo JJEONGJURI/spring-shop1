@@ -142,7 +142,14 @@
 			<version>1.4.7</version>
 		</dependency>
 		<!--mail 관련 설정 끝-->
-	</dependencies>
+		<!--spring websocket을 위한 설정 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!--spring websocket을 위한 설정 끝-->	
+		</dependencies>
 	<build>
 		<finalName>shop1</finalName>
 		<!--pom.xml의 첫번째 줄 오류 발생시 추가 -->

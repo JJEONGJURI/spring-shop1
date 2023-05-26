@@ -175,5 +175,9 @@ public class ShopService {
 	}
 
 
+	public String getSearch(User user) {
 
+			return userDao.search(user); 
+		
+	}
 }

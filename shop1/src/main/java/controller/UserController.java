@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,7 +27,7 @@ public class UserController { // POJO 방식
 	@Autowired
 	private ShopService service;
 
-	@GetMapping("*") // 설정되지 않은 모든 요청시 호출되는 메서드
+	@GetMapping("*") // view 단 하고 url 똑같으면 //설정되지 않은 모든 요청시 호출되는 메서드
 	public ModelAndView join() {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject(new User());
@@ -283,6 +284,61 @@ public class UserController { // POJO 방식
 		return "redirect:mypage?userid="+loginUser.getUserid();
 		 
 	}
-	
-
+	//"{url}search" : {url} 지정되지 않음. *search 요청시 호출되는 메서드 
+	@PostMapping("{url}search") //{url} == 밑에 url 
+	//@PathVariable : {url} 의 이름을 매개변수로 전달.
+	//요청 : idsearch : url >= "id"
+	//요청 : pwsearch : url >= "pw"
+	public ModelAndView search(User user, BindingResult bresult, @PathVariable String url) {
+		//여기서 url 은 id or pw 만 들어올 수 있다.
+		ModelAndView mav = new ModelAndView();
+		String code = "error.userid.search";
+		String title = "아이디";
+		//유효성 검증을 @Valid 로 하지않고 실시간으로 강제로 넣어줌
+		if(url.equals("pw")) { //비밀번호검증
+			title = "비밀번호";
+			code = "error.password.search";
+			if(user.getUserid() == null || user.getUserid().trim().equals("")) {
+				bresult.rejectValue("userid", "error.required"); //error.required.userid 오류코드
+				/*
+					BindingResult.reject() : global error => view 단 
+									=>jsp의 <spring:hasBindErrors>부분에서 오류 출력된다  
+					BindingResult.rejectValue() :
+									=>jsp의 <form:errors path= ... 부분에 오류가 출력된다.
+				 */
+			}
+		}
+		if(user.getEmail() == null || user.getEmail().trim().equals("")) {
+			bresult.rejectValue("email", "error.required"); //error.required.email 오류코드
+			//email은 user 객체의 property email명 과 같아야함
+		}
+		if(user.getPhoneno() == null || user.getPhoneno().trim().equals("")) {
+			bresult.rejectValue("phoneno", "error.required"); //error.required.phoneno 오류코드
+		}
+		if(bresult.hasErrors()) {
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		//입력값 검증이 정상적으로 완료된 상태
+		if(user.getUserid() != null && user.getUserid().trim().equals(""))
+			user.setUserid(null);
+		//유저아이디가 널은 아닌데 공백이면 null로 볼래
+		/*									  result
+		 * user.getUserid()==null : 아이디찾기  =>  아이디값 저장
+		 * user.getUserid()!=null : 비밀번호찾기 =>  비밀번호값 저장
+		 */
+		String result = null;
+		try {
+			result = service.getSearch(user);
+		}catch (EmptyResultDataAccessException e) {
+			bresult.reject(code);
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		System.out.println("result=" + result);
+		mav.addObject("result",result);
+		mav.addObject("title",title);
+		mav.setViewName("search"); // search 로 전달
+		return mav;
+	}
 }
