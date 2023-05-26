@@ -11,7 +11,7 @@
 </head>
 <body>
 	<h2>배송지 정보</h2>
-	<table>
+	<table class="w3-table-all">
 		<tr>
 			<td width="30%">주문아이디</td>
 			<td width="70%">${sessionScope.loginUser.userid}</td>
@@ -37,7 +37,7 @@
 		</tr>
 	</table>
 	<h2>구매 상품</h2>
-	<table>
+	<table class="w3-table-all">
 		<tr>
 			<th>상품명</th>
 			<th>가격</th>

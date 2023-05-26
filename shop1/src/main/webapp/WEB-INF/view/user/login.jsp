@@ -28,27 +28,27 @@ function win_open(page) {
 				</c:forEach>
 			</font>
 		</spring:hasBindErrors>
-		<table>
+		<table class="w3-table-all">
 			<tr>
-				<td>아이디</td>
+				<td class="w3-center">아이디</td>
 				<td>
-					<form:input path="userid" />
+					<form:input path="userid" class="w3-input"/>
 					<font color="red">
 						<form:errors path="userid" />
 					</font>
 				</td>
 			</tr>
 			<tr>
-				<td>비밀번호</td>
+				<td class="w3-center">비밀번호</td>
 				<td>
-					<form:input path="password" />
+					<form:input type="password" path="password" class="w3-input"/>
 					<font color="red">
 						<form:errors path="password" />
 					</font>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" align="center">
+				<td colspan="2" class="w3-center">
 					<input type="submit" value="로그인">
 					<input type="button" value="회원가입" onclick="location.href='join'">
 					<input type="button" value="아이디찾기" onclick="win_open('idsearch')">

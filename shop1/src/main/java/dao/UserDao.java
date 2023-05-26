@@ -1,11 +1,11 @@
 package dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 import javax.validation.Valid;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -79,6 +79,21 @@ public class UserDao {
 		param.put("password", chgpass);
 		template.update("update useraccount set password=:password where userid=:userid",param);
 		
+	}
+	public List<User> list() {
+		return template.query("select * from useraccount" , param, mapper);
+		//유저클래스에 있는 프로퍼티와 유저어카운트에 있는 프로퍼티와 이름이 같으면 매핑시켜서 유저객체로 리텅해줘라?
+	}
+	
+	// select * from useraccount where userid in('admin','test1')
+	public List<User> list(String[] idchks) {
+		StringBuilder ids = new StringBuilder();
+		for(int i=0; i<idchks.length; i++) {
+			ids.append("'").append(idchks[i]).append((i==idchks.length-1)?"'":"',");
+		}
+		
+		String sql = "select * from useraccount where userid in (" + ids.toString() + ")";
+		return template.query(sql,mapper);
 	}
 
 }

@@ -11,11 +11,11 @@
 </head>
 <body>
 	<h2>상품 상세 보기</h2>
-	<table>
+	<table class="w3-table-all">
 		<tr>
 			<td><img src="../img/${item.pictureUrl}"></td>
 			<td>
-				<table>
+				<table class="w3-table-all">
 					<tr>
 						<td>상품명</td>
 						<td>${item.name}</td>

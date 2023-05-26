@@ -163,4 +163,17 @@ public class ShopService {
 
 
 
+
+	public List<User> userList() {
+		return userDao.list(); //회원목록
+	}
+
+
+
+	public List<User> getUserList(String[] idchks) {
+		return userDao.list(idchks);
+	}
+
+
+
 }

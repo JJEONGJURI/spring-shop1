@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%--/shop1/src/main/webapp/WEB-INF/view/user/password.jsp --%>
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html>
 <head>
 <meta charset="UTF-8">
@@ -18,7 +18,7 @@
 	}
 
 </script>
-</head>
+</head> 
 <body>
 	<h2>비밀번호 변경</h2>
 	<form action="password" method="post" name="f" onsubmit="return inchk(this)" >

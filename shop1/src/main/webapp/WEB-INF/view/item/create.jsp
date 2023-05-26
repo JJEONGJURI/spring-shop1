@@ -24,7 +24,7 @@
 				enctype="multipart/form-data"인 경우 method="post"로 설정됨 
 	--%>
 		<h2>상품등록</h2>
-		<table>
+		<table class="w3-table-all">
 			<tr>
 				<td>상품명</td>
 				<%-- <form:input path="name" /> => 

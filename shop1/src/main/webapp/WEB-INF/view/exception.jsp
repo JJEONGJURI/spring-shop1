@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" isErrorPage="true"%>
+    pageEncoding="UTF-8" isErrorPage="true"%> 
 <%-- 
 	isErrorPage="true" => exception 내장개게 전달됨.
   						  내가 에러 페이지다. 

@@ -10,7 +10,7 @@
 </head>
 <body>
 	<h2>장바구니</h2>
-	<table>
+	<table class="w3-table-all">
 		<tr>
 			<td colspan="4">장바구니 상품 목록</td>
 		</tr>

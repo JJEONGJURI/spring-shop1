@@ -57,7 +57,7 @@
  --%>
 
 <body>
-	<table>
+	<table class="w3-table-all">
 		<tr>
 			<td id="tab1" class="tab">
 				<a href="javascript:disp_div('minfo','tab1')">회원정보</a>
@@ -70,7 +70,7 @@
 		</tr>
 	</table>
 	<div id="oinfo" class="info" style="display:none; width:100%;"> <%-- 안보여줌 : function에서 관리 --%>
-		<table>
+		<table class="w3-table-all">
 			<tr>
 				<th>주문번호</th>
 				<th>주문일자</th>
@@ -117,7 +117,7 @@
 		</table>
 	</div>
 	<div id="minfo" class="info"> <%--보여지고 있음 --%>
-		<table>
+		<table class="w3-table-all">
 			<tr>
 				<td>아이디</td>
 				<td>${user.userid}</td>

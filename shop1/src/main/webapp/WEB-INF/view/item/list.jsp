@@ -11,7 +11,7 @@
 <body>
 <a href="create">상품등록</a>
 <a href="../cart/cartView" style="float:right">장바구니</a>
-<table>
+<table class="w3-table-all">
 	<tr>
 		<th width="80">상품ID</th>
 		<th width="320">상품명</th>

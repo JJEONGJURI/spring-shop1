@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <title>회원탈퇴</title>
 </head>
-<body>
+<body> 
 	<table class="w3-table-all">
 		<tr>
 			<td>아이디</td>
