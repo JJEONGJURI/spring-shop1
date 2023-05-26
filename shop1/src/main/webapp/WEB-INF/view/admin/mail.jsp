@@ -26,7 +26,7 @@
 	<h2>메일보내기</h2>
 	<form name="mailform" method="post" action="mail" enctype="multipart/form-data"
 		onsubmit="return idinputchk(this)">
-		본인 네이버 ID : <input type="text" name="namerid" class="w3-input">
+		본인 네이버 ID : <input type="text" name="naverid" class="w3-input">
 		본인 네이버 비밀번호 : <input type="password" name="naverpw" class="w3-input">
 		<table class ="w3-table">
 			<tr>
