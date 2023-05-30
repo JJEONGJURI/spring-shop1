@@ -35,7 +35,8 @@ public class UserController { // POJO 방식
 	}
 
 	@PostMapping("join")
-	public ModelAndView userAdd(@Valid User user, BindingResult bresult) {
+	public ModelAndView userAdd(@Valid User user, BindingResult bresult) { //valid 있으면 bean 클래스에 있는 유효성 검사 핤 수 있다.
+		//@vaild 뒤에 BindingResult 나와야함 유효성검사한거 bresult에 넣어주는거임.
 		ModelAndView mav = new ModelAndView();
 		if (bresult.hasErrors()) {
 			mav.getModel().putAll(bresult.getModel());
@@ -289,13 +290,14 @@ public class UserController { // POJO 방식
 	//@PathVariable : {url} 의 이름을 매개변수로 전달.
 	//요청 : idsearch : url >= "id"
 	//요청 : pwsearch : url >= "pw"
-	public ModelAndView search(User user, BindingResult bresult, @PathVariable String url) {
+	public ModelAndView search(User user, BindingResult bresult, @PathVariable String url) { //pwsearch 라면 url 은 pw
+		//@User 가 아니라 user인 이유는 밑에서 직접 유효성 검사해줌
 		//여기서 url 은 id or pw 만 들어올 수 있다.
 		ModelAndView mav = new ModelAndView();
 		String code = "error.userid.search";
 		String title = "아이디";
 		//유효성 검증을 @Valid 로 하지않고 실시간으로 강제로 넣어줌
-		if(url.equals("pw")) { //비밀번호검증
+		if(url.equals("pw")) { //비밀번호검증 //url이 pw 인 경우
 			title = "비밀번호";
 			code = "error.password.search";
 			if(user.getUserid() == null || user.getUserid().trim().equals("")) {
@@ -331,7 +333,7 @@ public class UserController { // POJO 방식
 		try {
 			result = service.getSearch(user);
 		}catch (EmptyResultDataAccessException e) {
-			bresult.reject(code);
+			bresult.reject(code); //reject는 글로벌 에러?
 			mav.getModel().putAll(bresult.getModel());
 			return mav;
 		}
