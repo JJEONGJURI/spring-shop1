@@ -1,6 +1,7 @@
 package dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -22,6 +23,9 @@ public class BoardDao {
 	private RowMapper<Board> mapper = 
 			new BeanPropertyRowMapper<>(Board.class);
 	//db에서 조회된 컬럼명과 item 클래스의 프로퍼티를 비교해서 같은 값을 Item 객체로 생성
+	private String select = "select num, writer, pass, title, content, file1 fileurl, "
+			+ " regdate, readcnt, grp, grplevel, grpstep, boardid from board";
+	//file1 은 fileurl 로 별명 주
 	
 	@Autowired
 	//spring-db.xml 에서 설정된 dataSource 객체 주입
@@ -43,4 +47,53 @@ public class BoardDao {
 		//조회수는 0 
 		template.update(sql, param);
 	}
+
+	public int count(String boardid, String searchtype, String searchcontent) {
+		String sql = "select count(*) from board where boardid=:boardid"; //boardid 에 있는 레코드건수 가져와
+		param.clear();
+		param.put("boardid",boardid);
+		if(searchtype != null && searchcontent != null) { //검색요청
+			sql += " and " + searchtype + " like :searchcontent";
+			param.put("searchcontent","%"+searchcontent + "%");
+		}
+		return template.queryForObject(sql,param,Integer.class); 
+	}
+
+	public List<Board> list(Integer pageNum, int limit, String boardid, String searchtype, String searchcontent) {
+		param.clear();
+		String sql = select;
+		sql+=" where boardid=:boardid";
+		if(searchtype != null && searchcontent != null) { //검색요청
+			sql += " and " + searchtype + " like :searchcontent";
+			param.put("searchcontent", "%"+searchcontent +"%");
+		}
+		
+	//	sql += " where boardid=:boardid order by grp desc, grpstep asc limit :startrow, :limit";
+		//limit 만큼만 가져와
+		param.put("startrow", (pageNum-1) * limit); 
+		//1페이지 : 0, 2페이지 : 10
+		param.put("limit", limit);
+		param.put("boardid", boardid);
+		//해당 보드거만 가져옴
+		return template.query(sql, param,mapper);
+		//mapper : 보드 객체 안의 file1은 문자열값이 아니고 multipart 로 넣어줌? fileurl 로 들어감
+	}
+
+	public Board selectOne(Integer num) {
+		String sql = select + " where num = :num";
+		param.clear();
+		param.put("num", num);
+		return template.queryForObject(sql, param, mapper);
+	}
+
+	public void addReadcnt(Integer num) {
+		param.clear();
+		param.put("num", num);
+		String sql = "update board set readcnt = readcnt + 1 where num=:num";
+		template.update(sql, param);
+		
+	}
+	
+
+
 }

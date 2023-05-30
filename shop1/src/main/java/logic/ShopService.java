@@ -196,4 +196,24 @@ public class ShopService {
 		}
 		boardDao.insert(board);
 	}
+
+	public int boardcount(String boardid, String searchtype, String searchcontent) {
+		return boardDao.count(boardid, searchtype, searchcontent);
+	}
+
+	public List<Board> boardlist(Integer pageNum, int limit, String boardid, String searchtype, String searchcontent) {
+		return boardDao.list(pageNum,limit,boardid,searchtype, searchcontent);
+	}
+
+	public Board getBoard(Integer num) {
+		return boardDao.selectOne(num); //board레코드 조회
+	}
+
+	public void addReadcnt(Integer num) {
+		boardDao.addReadcnt(num);
+		
+	}
+
+
+
 }
