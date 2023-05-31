@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import exception.LoginException;
 import logic.Board;
 import logic.ShopService;
 
@@ -71,13 +73,13 @@ public class BoardController {
 	@RequestMapping("list") //board/list
 	public ModelAndView list(@RequestParam Map<String,String> param, HttpSession session) {
 	//public ModelAndView list(Integer pageNum, String boardid, HttpSession session){	
-		System.out.println(param);
+	//	System.out.println(param);
 		Integer pageNum = null; 
 		if(param.get("pageNum") != null)
 				pageNum = Integer.parseInt(param.get("pageNum"));
 		String boardid = param.get("boardid");
-		String searchtype = param.get("searchtype");
-		String searchcontent = param.get("searchcontent");
+		String searchtype = param.get("searchtype"); //처음엔 없어서 null 값 들어감
+		String searchcontent = param.get("searchcontent"); //처음엔 없어서 null 값 들어감
 		ModelAndView mav = new ModelAndView();
 		if(pageNum == null || pageNum.toString().equals("")) {
 			pageNum = 1;
@@ -87,10 +89,13 @@ public class BoardController {
 		}
 		session.setAttribute("boardid", boardid);
 		if(searchtype == null || searchcontent == null || searchtype.trim().equals("") || searchcontent.trim().equals("")) {
+			//하나라도 null 이거나 공백이라면
 			searchtype = null;
 			searchcontent = null;
+			//둘다 null로 하겠다
 		}
 		String boardName=null;
+		//화면에 나타내기 위해서
 		switch(boardid) {
 		case "1" : boardName = "공지사항"; break;
 		case "2" : boardName = "자유게시판"; break;
@@ -142,7 +147,63 @@ public class BoardController {
 			mav.addObject("boardName","QNA");
 		return mav;
 	}
+	/*
+	 * 1.유효성 검사하기 - 파라미터값 저장
+	 * 	- 원글정보 : num, grp, grplevel, grpstep, boardid
+	 *  - 답글정보 : writer, pass, subject, content
+	 * 2. db에 insert => service.boardReply()
+	 * 	- 원글의 grpstep 보다 큰 이미 등록된 답글의 grpstep 값을 +1
+	 * 		=> boardDao.grpStepAdd()
+	 * 		num : maxNum() + 1
+	 * 	- db에 insert => boardDao.insert()
+	 * 		grp : 원글과 동일
+	 *   	grplevel : 원글의 grplevel +1
+	 *   	grpstep : 원글의 grpstep +1
+	 *  3.등록 성공 : list로 페이지 이동
+	 *    등록 실패 : "답변 등록시 오류 발생" reply 페이지 이동
+	 */
+	@GetMapping("reply")
+	public ModelAndView getBoard(Integer num, HttpSession session ) {
+		ModelAndView mav = new ModelAndView();
+		String boardid = (String)session.getAttribute("boardid");
+		Board board = service.getBoard(num);
+		mav.addObject("board",board);
+		if(board.getBoardid() == null || board.getBoardid().equals("1"))
+			mav.addObject("boardName","공지사항");
+		else if (board.getBoardid().equals("2"))
+			mav.addObject("boardName","자유게시판");		
+		else if (board.getBoardid().equals("3"))
+			mav.addObject("boardName","QNA");
+
+		return mav;
+		}
+	@PostMapping("reply")
+	public ModelAndView reply(@Valid Board board, BindingResult bresult) {
+		ModelAndView mav = new ModelAndView();
+		//유효성 검증
+		if(bresult.hasErrors()) {
+			//답글에서 RE 추가 안되게 함 시작
+			Board dbboard = service.getBoard(board.getNum()); //원글 정보를 db에서 읽기
+			Map<String,Object> map = bresult.getModel(); //getModel() 을 넣음
+			Board b = (Board)map.get("board"); //화면에서 입력받은 값을 저장한 Board 객체
+			b.setTitle(dbboard.getTitle());//원글의 제목으로 변경 
+			//답글에서 Re 추가 안되게 함 끝
+			mav.getModel().putAll(bresult.getModel());
+		return mav;
+		}
+		try {
+			service.boardReply(board);
+			mav.setViewName("redirect:list?boardid="+board.getBoardid());
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new LoginException("답변등록시 오류 발생","reply?num="+board.getNum());
+		}
+		return mav;
+
+				
+	}
+}
 		
 		
 	
-}
+

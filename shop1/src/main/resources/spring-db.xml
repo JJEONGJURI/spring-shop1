@@ -5,12 +5,15 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
  xsi:schemaLocation="http://www.springframework.org/schema/beans
  http://www.springframework.org/schema/beans/spring-beans.xsd
  http://www.springframework.org/schema/context
  http://www.springframework.org/schema/context/spring-context.xsd
  http://www.springframework.org/schema/aop
- http://www.springframework.org/schema/aop/spring-aop.xsd">
+ http://www.springframework.org/schema/aop/spring-aop.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx.xsd">
  <!-- db 연결 객체 생성. javax.sql.DataSource 객체 생성 -->
  	<bean id="dataSource"
  		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -27,5 +30,11 @@
  			<value>1234</value>
  		</property>
  		
+ 	</bean>
+ 	<tx:annotation-driven transaction-manager="txManager"/>
+ 	<!-- 트랜잭션 할거야 -->
+ 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+ 		<!-- ref 는 위에 bean id 와 같아야 한다. -->
+ 		<property name="dataSource" ref="dataSource" />
  	</bean>
 </beans>

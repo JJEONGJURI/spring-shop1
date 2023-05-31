@@ -76,4 +76,15 @@ js, css, html : 웹에서 기본제공되는 파일은 spring 에서 제외시�
 		<websocket:mapping handler="echoHandler" path="/chatting" />
 	</websocket:handlers>
 	<!-- websocket 관련 설정 끝-->
+	
+	<!-- 인터셉터 설정 : 요청 url을 중심으로 실행 전 후에 처리 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/board/write"/>
+			<mvc:mapping path="/board/update"/>
+			<mvc:mapping path="/board/delete"/>
+			<bean class="interceptor.BoardInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<!-- 인터셉터 설정 끝-->
 </beans>

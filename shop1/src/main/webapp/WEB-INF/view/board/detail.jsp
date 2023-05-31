@@ -29,7 +29,7 @@
 </style>
 </head>
 <body>
-	<table class="w3-table">
+	<table class="w3-table-all">
 		<tr>
 			<td colspan="2">${boardName}</td>
 		</tr>

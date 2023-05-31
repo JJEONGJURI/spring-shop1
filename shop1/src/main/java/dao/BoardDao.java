@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -52,8 +53,12 @@ public class BoardDao {
 		String sql = "select count(*) from board where boardid=:boardid"; //boardid 에 있는 레코드건수 가져와
 		param.clear();
 		param.put("boardid",boardid);
+		
+		//null이 아니라면 밑에거 추가
 		if(searchtype != null && searchcontent != null) { //검색요청
+			//검색값을 가지고 있으면
 			sql += " and " + searchtype + " like :searchcontent";
+			//searchtype은 컬럼명임
 			param.put("searchcontent","%"+searchcontent + "%");
 		}
 		return template.queryForObject(sql,param,Integer.class); 
@@ -68,7 +73,7 @@ public class BoardDao {
 			param.put("searchcontent", "%"+searchcontent +"%");
 		}
 		
-	//	sql += " where boardid=:boardid order by grp desc, grpstep asc limit :startrow, :limit";
+		sql += " order by grp desc, grpstep asc limit :startrow, :limit";
 		//limit 만큼만 가져와
 		param.put("startrow", (pageNum-1) * limit); 
 		//1페이지 : 0, 2페이지 : 10
@@ -93,7 +98,31 @@ public class BoardDao {
 		template.update(sql, param);
 		
 	}
-	
+
+//	public int grpStepAdd() {
+//		return template.queryForObject("select ifnull(max(grpstep),0) from board where num=:num",param, Integer.class);
+//	}
+
+//	public void rinsert(Board board) {
+//		SqlParameterSource param = new BeanPropertySqlParameterSource(board);
+//		//board객체에 있는 파라미터를 내가 프로퍼티로 쓸거임
+//		String sql = "insert into board (num, boardid, writer, pass, title, content, file1, regdate, readcnt, grp, grplevel, grpstep) "
+//				+ " values (:num, :boardid, :writer, :pass, :title, :content, :fileurl, now(), 0 ,:grp, :grplevel+1, :grpstep)";
+//		//file1에는 fil1url 넣어라
+//		//조회수는 0 
+//		template.update(sql, param);
+//	}
+
+	public void updateGrpStep(@Valid Board board) {
+		String sql = "update board set grpstep=grpstep + 1"
+				+ " where grp = :grp and grpstep > :grpstep";
+		param.clear();
+		param.put("grp", board.getGrp()); //원글의 grp
+		param.put("grpstep", board.getGrpstep()); //원글의 grpstep
+		template.update(sql, param);
+	}
+
+
 
 
 }

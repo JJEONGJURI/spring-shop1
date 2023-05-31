@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import dao.BoardDao;
@@ -211,6 +212,38 @@ public class ShopService {
 
 	public void addReadcnt(Integer num) {
 		boardDao.addReadcnt(num);
+		
+	}
+
+
+//	public void boardReply(Board board, HttpServletRequest request) {
+//		int grpstep = boardDao.grpStepAdd();
+//		board.setGrpstep(++grpstep);
+//		int maxnum = boardDao.maxNum();
+//		board.setNum(++maxnum);
+//		if(board.getFile1() != null && !board.getFile1().isEmpty()) {
+//			String path= request.getServletContext().getRealPath("/") + "board/file/";
+//			this.uploadFileCreate(board.getFile1(), path);
+//			board.setFileurl(board.getFile1().getOriginalFilename());
+//		}
+//		boardDao.rinsert(board); 
+//	}
+	@Transactional //서비스를 transaction 처리함.
+	//거래를 원자화 한다.(all or nothing) -> 하나라도 잘못되면 전부 취소해
+	public void boardReply(@Valid Board board) {
+		boardDao.updateGrpStep(board); //이미 등록된 grpstep값 1씩 증가
+		//board 에 원글과 답변글 정보 섞여있다
+		
+		//원글에 있는 정보 답변글로 바꿔주기 시작
+		int max = boardDao.maxNum(); //최대 num 조회
+		board.setNum(++max); //원글의 num => 답변글의 num 값으로 변경
+							//원글의 grp => 답변글의 grp 값을 동일, 설정 필요 없음
+							//원글의 boardid => 답변글의 boardid 값을 동일. 설정 필요 없음
+		board.setGrplevel(board.getGrplevel() + 1); //원글의 grplevel => +1 답변글의 grplevel값으로 설정
+		board.setGrpstep(board.getGrpstep() + 1); //원글의 grpstep => +1 답변글의 grpstep값으로 설정
+		//원글에 있는 정보 답변글로 바꿔주기 끝
+		
+		boardDao.insert(board);
 		
 	}
 
