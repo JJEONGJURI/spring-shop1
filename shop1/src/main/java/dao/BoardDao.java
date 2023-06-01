@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import javax.validation.Valid;
 
@@ -123,6 +124,14 @@ public class BoardDao {
 	}
 
 
+	public void update(@Valid Board board) {
+		String sql = "update board set writer=:writer, title=:title, content=:content, file1=:fileurl where num=:num";
+		SqlParameterSource param = new BeanPropertySqlParameterSource(board); //board객체를 파라미터로 쓸거야
+		template.update(sql, param); // 보드에 있는 프로퍼티값을 파라미터로 쓸게
+	}
 
+	public void delete(Integer num) {
+		template.update("delete from board where num="+num, param);
+	}
 
 }

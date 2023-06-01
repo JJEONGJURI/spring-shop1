@@ -5,20 +5,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import exception.BoardException;
 import exception.LoginException;
 import logic.Board;
 import logic.ShopService;
@@ -162,7 +164,7 @@ public class BoardController {
 	 *  3.등록 성공 : list로 페이지 이동
 	 *    등록 실패 : "답변 등록시 오류 발생" reply 페이지 이동
 	 */
-	@GetMapping("reply")
+	@GetMapping({"reply","update","delete"})
 	public ModelAndView getBoard(Integer num, HttpSession session ) {
 		ModelAndView mav = new ModelAndView();
 		String boardid = (String)session.getAttribute("boardid");
@@ -198,11 +200,94 @@ public class BoardController {
 			e.printStackTrace();
 			throw new LoginException("답변등록시 오류 발생","reply?num="+board.getNum());
 		}
-		return mav;
-
-				
+		return mav;		
 	}
+	/*
+	 * 1.유효성 검증.
+	 * 2.비밀번호 검증 => 검증 오류 : 비밀번호가 틀립니다. 메세지 출력. update 페이지 이동
+	 * 3.업로드된 파일이 있는 경우는 파일 업로드. db에 내용 수정.
+	 * 4.수정 완료 : detail 페이지로 이동
+	 * 	 수정 실패 : 수정 실패. 메세지 출력. update 페이지 이동  
+	 */
+	@PostMapping("update")
+	public ModelAndView update(@Valid Board board, BindingResult bresult, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		if(bresult.hasErrors()) {
+			mav.getModel().putAll(bresult.getModel());
+			return mav; //@valid 그대로 가져옴
+		}
+		Board dbBoard = service.getBoard(board.getNum());			
+		if(!dbBoard.getPass().equals(board.getPass())){
+			throw new BoardException("비밀번호가 틀립니다.", "update?num="+board.getNum());
+		}
+		
+		//비밀번호 일치. 입력값 정상
+		try {
+			service.boardUpdatd(board,request); //파일업로드, db 게시글 수정
+			mav.setViewName("redirect:detail?num="+board.getNum());
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new LoginException("수정실패", "update?num="+board.getNum());
+		}
+		return mav;
+	}
+	/*
+	 * 1. num, pass 파라미터 저장 => 매개변수 처리
+	 * 2. 비밀번호 검증 : db에서 num 게시글 조회. db에 등록된 비밀번호와 입력된 비밀번호 비교
+	 * 				비밀번호 오류 : error.board.password 코드값 설정 => delete.jsp로 전달
+	 * 3. 비밀번호 일치 : db에서 num 게시글 삭제
+	 * 				삭제 성공: list 페이지 이동
+	 * 				삭제 실패 : delete 페이지 이동
+	 */
+	@PostMapping("delete")
+	public ModelAndView delete(Board board,BindingResult bresult) { //vaild 안해도 유효성 검사 할 수 있다.
+		ModelAndView mav = new ModelAndView();
+		if(board.getPass() == null || board.getPass().trim().equals("")) {
+			bresult.reject("error.required.password");
+			return mav;
+		}
+		Board dbboard = service.getBoard(board.getNum());
+		if(!board.getPass().equals(dbboard.getPass())){
+			bresult.reject("error.board.password");
+			return mav;
+		}
+		try {
+			service.boardDelete(board.getNum());
+			mav.setViewName("redirect:list?boardid="+dbboard.getBoardid());
+		} catch (Exception e){
+			e.printStackTrace();
+			bresult.reject("error.board.fail");
+		}
+		return mav;
+	}
+	@RequestMapping("imgupload")
+	public String imgupload(MultipartFile upload, String CKEditorFuncNum, HttpServletRequest request, Model model) {
+		//String 따로 Model 따로 하는 경우도 있다 
+		//매개변수로 model 이 ckedit 로 넘어감 => filename을 model.addAttribute로 함
+		/*
+		 * upload : CKEditor 모둘에서 업로드되는 이미지의 이름.
+		 * 			업로드되는 이미지파일의 내용. 이미지값
+		 * CKEditorFuncNum : CKEditor 모듈에서 파라미터로 전달되는 값. 리턴해야되는 값
+		 * model : ModelAndView 중 Model에 해당하는 객체.
+		 * 		   뷰에 전달할 데이터 정보 저장할 객체
+		 * return 타입이 String : 뷰의 이름
+		 */
+		//업로드 되는 위치 폴더
+		//request.getServletContext().getRealPath("/") : 웹어플리케이션의 절대 경로 값.
+		String path = request.getServletContext().getRealPath("/") + "board/imgfile/";
+		service.uploadFileCreate(upload, path); //upload (파일의 내용), path(업로드되는 폴더)
+		//request.getcontextPath() : 프로젝트명(웹어플리케이션서버이름). : shop1/
+		//upload.getOriginalFilename() : %EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202023-05-31%20153920.png
+		//http://localhost:8080/shop1/board/imgfile/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202023-05-31%20153920.png
+		String fileName = request.getContextPath() //웹어플리케이션 서버경로. 웹 url 정보 // 웹어플리케이션 경로 ex:${path}/board/list?boardid=2
+				+ "/board/imgfile/" + upload.getOriginalFilename();
+		model.addAttribute("fileName", fileName);
+		return "ckedit"; //view 이름. /WEB-INF/view/ckedit.jsp
+	}
+
 }
+
+	
 		
 		
 	

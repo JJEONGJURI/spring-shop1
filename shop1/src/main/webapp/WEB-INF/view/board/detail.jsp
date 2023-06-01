@@ -45,9 +45,9 @@
 		<tr>
 			<td>내용</td>
 			<td class="leftcol">
-				<table class="lefttoptable">
+				<table class="lefttoptable w3-table-all">
 					<tr>
-						<td class="leftcol lefttoptable">${board.content}</td>
+						<td class="leftcol lefttoptable w3-table-all">${board.content}</td>
 				</table>
 			</td>
 		</tr>
@@ -60,7 +60,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2">
+			<td colspan="2" class="w3-center">
 				<a href="reply?num=${board.num}">[답변]</a>
 				<a href="update?num=${board.num}">[수정]</a>
 				<a href="delete?num=${board.num}">[삭제]</a>

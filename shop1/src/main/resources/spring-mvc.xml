@@ -53,7 +53,8 @@ js, css, html : 웹에서 기본제공되는 파일은 spring 에서 제외시�
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings"> <!-- 처리 가능한 예외 목록 -->
 			<value>exception.CartEmptyException=exception
-			exception.LoginException=exception</value> 
+			exception.LoginException=exception
+			exception.BoardException=exception</value> 
 			
 			<!--exception.CartEmptyException 예외가 발생 => /WEB-INF/view/exception.jsp 로 제어 이동 -->
 		</property>

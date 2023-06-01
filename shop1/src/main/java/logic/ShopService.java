@@ -60,9 +60,9 @@ public class ShopService {
 		
 	}
 
-	private void uploadFileCreate(MultipartFile file, String path) {
+	public void uploadFileCreate(MultipartFile file, String path) {
 		//file : 파일의 내용
-		//path : 업로드 할 폴더
+		//path : 업로드 할 폴더 위치 절대경로로 가져옴
 		String orgFile = file.getOriginalFilename(); //파일 이름
 		File f = new File(path);
 		if(!f.exists()) f.mkdirs(); // 파일이 존재 하지 않으면 폴더 만들어줘
@@ -245,6 +245,22 @@ public class ShopService {
 		
 		boardDao.insert(board);
 		
+	}
+
+
+	public void boardUpdatd(@Valid Board board, HttpServletRequest request) {
+		if(board.getFile1() != null && !board.getFile1().isEmpty()) {
+			String path= request.getServletContext().getRealPath("/") + "board/file/";
+			this.uploadFileCreate(board.getFile1(), path); //파일 업로드 : board.getFile1()의 내용을 파일로 생성
+			board.setFileurl(board.getFile1().getOriginalFilename()); //파일 URL 값 변경
+		}
+		boardDao.update(board);
+		
+	}
+
+
+	public void boardDelete(Integer num) {
+		boardDao.delete(num);
 	}
 
 
