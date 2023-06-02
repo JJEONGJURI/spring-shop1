@@ -78,6 +78,17 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     class="w3-bar-item w3-button w3-padding <c:if test='${url == "board" && boardid=="3"}'>w3-blue</c:if>">
     <i class="fa fa-eye fa-fw"></i>&nbsp; QnA</a>
   </div>
+  
+  <!-- 크롤링 시작 : 수출입은행 환율 정보 표시 영역 -->
+	
+  	<div id="exchange" style="margin:6px;"></div>
+
+  
+  
+  <!-- 크롤링  끝 -->
+  
+  
+  
 </nav>
 
 
@@ -195,13 +206,15 @@ function w3_close() {
 
 	<script type="text/javascript">
 		$(function(){ //문서가 준비되면
-			getSido2() //문서 시작하고 getSido 호출
+			getSido() //문서 시작하고 getSido 호출 //sido.txt 파일을 읽어서 시도 정보 조회
+//			exchangeRate() //수출입은행 환율 정보 조회
+			exchangeRate2() //수출입은행 환율 정보 조회
 		})
 		function getSido() {  //서버에서 리스트 객체를 배열로 직접 전달 받음
 			$.ajax({ //ajax으로 서버에 요청 ${path} = shop1
 				url : "${path}/ajax/select",
 				//arr : 서버에서 전달 받는 리스트 객체를 배열로 인식함 
-				success : function(arr) {
+				success : function(arr) { //controller 의 if 문장 실행
 					console.log(arr)
 					$.each(arr,function(i,item){
 						// i : 인덱스. 첨자. 0부터 시작
@@ -230,16 +243,16 @@ function w3_close() {
 				}
 			})
 		}
-		function getText(name) {
-			let city = $("select[name='si']").val();
-			let gu = $("select[name='gu']").val();
+		function getText(name) { //getText 함수 호출 name 에는 si 들어감
+			let city = $("select[name='si']").val();	//시도 선택값
+			let gu = $("select[name='gu']").val();		//구군 선택값
 			let disname;
 			let toptext="구군을 선택하세요";
 			let params = ''
-			if(name=='si') {
+			if(name=='si') {	//시도 선택한 경우
 				params = "si=" + city.trim()
 				disname = "gu"
-			} else if(name=='gu') {
+			} else if(name=='gu') { 	//구군 선택한 경우
 				params = "si=" + city.trim()+"&gu="+gu.trim()
 				disname = "dong"
 				toptext = "동리를 선택하세요";
@@ -251,12 +264,12 @@ function w3_close() {
 				type : "POST",
 				data :  params,
 				success : function(arr){
-					$("select[name="+disname+"] option").remove() 
+					$("select[name="+disname+"] option").remove() //출력 selelct 태그의 option 객체를 제거해 
 					$("select[name="+disname+"]").append(function(){
 						return "<option value=''>"+toptext+"</option>" // 구군을 선택하세요
 					})
 					//구에 밑에 데이터를 넣어줌
-					$.each(arr,function(i,item){ 
+					$.each(arr,function(i,item){ //서버에서 전송 받은 배열값을 option 객체에 추가해준다
 						$("select[name="+disname+"]").append(function(){
 							return "<option>"+item+"</option>"
 						})	
@@ -264,7 +277,55 @@ function w3_close() {
 				}
 			})	
 		}
-	
+	function exchangeRate() {
+		$.ajax("${path}/ajax/exchange",{
+			success : function(data) {
+				console.log(data)
+				$("#exchange").html(data) //서버단에서 데이터 만들어 전송
+			},
+			error : function(e) {
+				alert("환율 조회시 서버 오류 발생 :" + e.status)
+			}
+		})
+	}
+	<%--
+	function exchangeRate2() {
+		$.ajax("${path}/ajax/exchange2",{ //list로 데이터 수신 
+			success : function(arr) {
+				let html = "<table class='w3-table-all w3-margin-right'>"
+				html += "<tr><th>통화</th><th>기준율</th><th>받으실때</th><th>보내실때</th></tr>"
+				$.each(arr,function(i,tds){ //tds : 배열
+					html += "<tr><td>"+tds[0]+"<br>"+tds[1]+"</td><td>"+tds[4]+"</td>"
+							+ "<td>"+tds[2]+"</td><td>"+tds[3]+"</td><tr>"
+				})
+				html += "</table>"
+				$("#exchange").html(html) //서버단에서 데이터 만들어 전송
+			},
+			error : function(e) {
+				alert("환율 조회시 서버 오류 발생 :" + e.status)
+			}
+		})
+	}
+	--%>
+	function exchangeRate2() {
+		$.ajax("${path}/ajax/exchange2",{ //Map로 데이터 수신 
+			success : function(json) {
+				console.log(json)
+				let html = "<h4 class='w3-center'>수출입은행<br>"+json.exdate+"</h4>"
+				html += "<table class='w3-table-all w3-margin-right'>"
+				html += "<tr><th>통화</th><th>기준율</th><th>받으실때</th><th>보내실때</th></tr>"
+				$.each(json.trlist,function(i,tds){ //tds : 배열
+					html += "<tr><td>"+tds[0]+"<br>"+tds[1]+"</td><td>"+tds[4]+"</td>"
+							+ "<td>"+tds[2]+"</td><td>"+tds[3]+"</td><tr>"
+				})
+				html += "</table>"
+				$("#exchange").html(html) //서버단에서 데이터 만들어 전송
+			},
+			error : function(e) {
+				alert("환율 조회시 서버 오류 발생 :" + e.status)
+			}
+		})
+	}
 	</script>
 
 	<!-- ajax 하려고 추가한거 끝 -->
